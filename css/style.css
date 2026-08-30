@@ -453,8 +453,8 @@ a:focus-visible, button:focus-visible {
 
 .hero-container {
     display: grid;
-    grid-template-columns: 1.2fr 0.8fr;
-    gap: 4rem;
+    grid-template-columns: 1.1fr 1fr 0.8fr;
+    gap: 3rem;
     max-width: 1200px;
     margin: 0 auto;
     padding: 6rem 2rem;
@@ -1223,6 +1223,79 @@ a:focus-visible, button:focus-visible {
     max-width: 480px;
 }
 
+/* Contact Details */
+.footer-contact h4 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 1.25rem;
+    position: relative;
+    padding-bottom: 0.5rem;
+}
+
+.footer-contact h4::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 30px;
+    height: 2px;
+    background-color: var(--clr-aws-orange);
+    border-radius: var(--radius-full);
+}
+
+.contact-person {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    margin-bottom: 1.25rem;
+}
+
+.contact-role {
+    color: var(--clr-gray-300);
+    font-size: 0.8rem;
+    line-height: 1.4;
+}
+
+.contact-name {
+    color: var(--clr-white);
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.contact-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.contact-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: fit-content;
+    color: var(--clr-gray-300);
+    font-size: 0.9rem;
+    transition: var(--transition-base);
+}
+
+.contact-link:hover {
+    color: var(--clr-aws-orange);
+    transform: translateX(3px);
+}
+
+.contact-icon {
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-sm);
+    color: var(--clr-aws-orange);
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
 .footer-links h4 {
     font-size: 1.1rem;
     font-weight: 700;
@@ -1532,7 +1605,7 @@ a:focus-visible, button:focus-visible {
     
     .footer-container {
         grid-template-columns: 1fr;
-        gap: 2rem;
+        gap: 2.5rem;
     }
 }
 
