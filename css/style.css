@@ -929,7 +929,280 @@ a:focus-visible, button:focus-visible {
 }
 
 /* --------------------------------------------------------------------------
-   11. Registration Section
+   11. Nimbus Buildathon 1.O Gallery — Horizontal Scroll Pane
+   -------------------------------------------------------------------------- */
+.gallery-section {
+    background: linear-gradient(180deg, var(--clr-gray-50) 0%, var(--clr-white) 100%);
+    border-top: 1px solid var(--clr-gray-200);
+    border-bottom: 1px solid var(--clr-gray-200);
+}
+
+.gallery-intro {
+    max-width: 680px;
+    margin: -0.25rem auto 0;
+    color: var(--clr-text-muted);
+    font-size: 1rem;
+}
+
+/* Wrapper positions the arrows relative to the track */
+.gallery-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 3rem;
+}
+
+/* Horizontal scroll track */
+.gallery-track {
+    display: flex;
+    gap: 1.25rem;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    padding: 1rem 0.25rem 1.5rem;
+    flex: 1;
+    min-width: 0;
+    outline: none;
+}
+
+/* Hide scrollbar visually but keep accessible */
+.gallery-track::-webkit-scrollbar {
+    height: 0;
+    display: none;
+}
+
+.gallery-track {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+}
+
+/* Focus ring on the track for keyboard users */
+.gallery-track:focus-visible {
+    outline: 3px solid var(--clr-aws-orange-light);
+    outline-offset: 4px;
+    border-radius: var(--radius-md);
+}
+
+/* Individual photo card */
+.gallery-card {
+    flex: 0 0 calc((100% - 2 * 1.25rem) / 3); /* ~3 cards on desktop */
+    scroll-snap-align: start;
+    aspect-ratio: 3 / 2;
+    position: relative;
+    display: block;
+    overflow: hidden;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--clr-gray-200);
+    background-color: var(--clr-navy-dark);
+    box-shadow: var(--shadow-md);
+    transition: transform var(--transition-base), box-shadow var(--transition-base), border-color var(--transition-base);
+    isolation: isolate;
+}
+
+.gallery-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.gallery-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(11, 19, 41, 0) 45%, rgba(11, 19, 41, 0.78) 100%);
+    opacity: 0;
+    transition: opacity var(--transition-base);
+    z-index: 1;
+}
+
+.gallery-card-overlay {
+    position: absolute;
+    left: 1rem;
+    right: 1rem;
+    bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--clr-white);
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity var(--transition-base), transform var(--transition-base);
+    z-index: 2;
+}
+
+.gallery-card-overlay::after {
+    content: '↗';
+    width: 34px;
+    height: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: var(--radius-full);
+    font-size: 1rem;
+}
+
+/* Hover state */
+.gallery-card:hover {
+    transform: translateY(-4px) scale(1.02);
+    border-color: rgba(255, 153, 0, 0.45);
+    box-shadow: var(--shadow-xl);
+}
+
+.gallery-card:hover img {
+    transform: scale(1.06);
+}
+
+.gallery-card:hover::after,
+.gallery-card:hover .gallery-card-overlay {
+    opacity: 1;
+}
+
+.gallery-card:hover .gallery-card-overlay {
+    transform: translateY(0);
+}
+
+/* Focus state for card links */
+.gallery-card:focus-visible {
+    outline: 3px solid var(--clr-aws-orange-light);
+    outline-offset: 2px;
+}
+
+/* Arrow navigation buttons */
+.gallery-arrow {
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-full);
+    background-color: var(--clr-white);
+    border: 1px solid var(--clr-gray-200);
+    box-shadow: var(--shadow-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--clr-navy-dark);
+    cursor: pointer;
+    transition: var(--transition-base);
+    z-index: 5;
+}
+
+.gallery-arrow:hover:not(:disabled) {
+    background-color: var(--clr-aws-orange);
+    color: var(--clr-white);
+    border-color: var(--clr-aws-orange);
+    box-shadow: var(--shadow-orange);
+    transform: scale(1.08);
+}
+
+.gallery-arrow:focus-visible {
+    outline: 3px solid var(--clr-aws-orange-light);
+    outline-offset: 2px;
+}
+
+.gallery-arrow:disabled {
+    opacity: 0.35;
+    cursor: default;
+    pointer-events: none;
+}
+
+/* Pure CSS lightbox, no extra JavaScript required */
+.gallery-lightbox {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    background: rgba(5, 10, 24, 0.94);
+    z-index: 2000;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.gallery-lightbox:target {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.lightbox-backdrop {
+    position: absolute;
+    inset: 0;
+    cursor: zoom-out;
+}
+
+.lightbox-content {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: min(1100px, 94vw);
+    height: min(88vh, 900px);
+    z-index: 1;
+}
+
+.lightbox-content img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: var(--radius-md);
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55);
+}
+
+.lightbox-close {
+    position: absolute;
+    top: -0.75rem;
+    right: -0.75rem;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--clr-aws-orange);
+    color: var(--clr-white);
+    border: 2px solid var(--clr-white);
+    border-radius: var(--radius-full);
+    font-size: 1.8rem;
+    line-height: 1;
+    box-shadow: var(--shadow-orange);
+    z-index: 2;
+}
+
+.lightbox-close:hover {
+    background: var(--clr-aws-orange-dark);
+    transform: scale(1.06);
+}
+
+/* Reduced motion: disable gallery hover animations */
+@media (prefers-reduced-motion: reduce) {
+    .gallery-card,
+    .gallery-card img {
+        transition: none;
+    }
+    .gallery-card:hover {
+        transform: none;
+    }
+    .gallery-card:hover img {
+        transform: none;
+    }
+    .gallery-track {
+        scroll-behavior: auto;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   12. Registration Section
    -------------------------------------------------------------------------- */
 .registration-section {
     background-color: var(--clr-white);
@@ -1044,6 +1317,69 @@ a:focus-visible, button:focus-visible {
     font-weight: 400;
 }
 
+/* Fee Tiers — Early Bird / Regular */
+.fee-tiers {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+}
+
+.fee-tier {
+    background-color: var(--clr-white);
+    border: 1px solid var(--clr-gray-200);
+    border-radius: var(--radius-md);
+    padding: 1.25rem 2.5rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    transition: var(--transition-base);
+}
+
+.fee-tier-highlight {
+    border-color: var(--clr-aws-orange);
+    background-color: rgba(255, 153, 0, 0.04);
+    box-shadow: 0 0 0 1px var(--clr-aws-orange);
+    position: relative;
+}
+
+
+.fee-tier-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--clr-text-muted);
+}
+
+.fee-tier-highlight .fee-tier-label {
+    color: var(--clr-aws-orange-dark);
+}
+
+.fee-tier-amount {
+    font-size: 1.75rem;
+    font-weight: 900;
+    color: var(--clr-navy-dark);
+    line-height: 1.2;
+}
+
+.fee-tier-highlight .fee-tier-amount {
+    color: var(--clr-aws-orange-dark);
+}
+
+.fee-tier-amount small {
+    font-size: 0.8rem;
+    color: var(--clr-text-muted);
+    font-weight: 400;
+}
+
+.fee-tier-date {
+    font-size: 0.78rem;
+    color: var(--clr-text-muted);
+    line-height: 1.3;
+    margin-top: 0.15rem;
+}
+
 .payment-instructions {
     margin-bottom: 2rem;
 }
@@ -1119,7 +1455,7 @@ a:focus-visible, button:focus-visible {
 }
 
 /* --------------------------------------------------------------------------
-   12. Sponsor Section
+   13. Sponsor Section
    -------------------------------------------------------------------------- */
 .sponsor-section {
     background-color: var(--clr-gray-50);
@@ -1193,7 +1529,7 @@ a:focus-visible, button:focus-visible {
 }
 
 /* --------------------------------------------------------------------------
-   13. Footer Section & Social Links
+   14. Footer Section & Social Links
    -------------------------------------------------------------------------- */
 .footer {
     background-color: var(--clr-navy-dark);
@@ -1378,7 +1714,7 @@ a:focus-visible, button:focus-visible {
 }
 
 /* --------------------------------------------------------------------------
-   14. Animations (Entrance / IntersectionObserver)
+   15. Animations (Entrance / IntersectionObserver)
    -------------------------------------------------------------------------- */
 .reveal {
     opacity: 0;
@@ -1392,7 +1728,7 @@ a:focus-visible, button:focus-visible {
 }
 
 /* --------------------------------------------------------------------------
-   15. Responsive Design Media Queries
+   16. Responsive Design Media Queries
    -------------------------------------------------------------------------- */
 
 /* Tablet Viewports */
@@ -1417,6 +1753,10 @@ a:focus-visible, button:focus-visible {
     .sponsor-brand {
         border-right: none;
         border-bottom: 1px solid var(--clr-gray-200);
+    }
+
+    .gallery-card {
+        flex: 0 0 calc((100% - 1 * 1.25rem) / 2); /* ~2 cards on tablet */
     }
 }
 
@@ -1538,6 +1878,41 @@ a:focus-visible, button:focus-visible {
         grid-column: span 1;
     }
     
+    /* Gallery — horizontal pane responsive */
+    .gallery-card {
+        flex: 0 0 75%; /* ~1.3 cards visible, showing next card peeking */
+    }
+
+    .gallery-arrow {
+        display: none; /* Touch swipe is primary on mobile */
+    }
+
+    .gallery-wrapper {
+        margin-left: -1rem;
+        margin-right: -1rem;
+    }
+
+    .gallery-track {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    .gallery-card-overlay {
+        opacity: 1;
+        transform: translateY(0);
+        bottom: 0.65rem;
+        left: 0.65rem;
+        right: 0.65rem;
+    }
+
+    .gallery-card::after {
+        opacity: 1;
+    }
+
+    .gallery-intro {
+        font-size: 0.9rem;
+    }
+
     /* Registration flow stacked */
     .registration-layout {
         max-width: 100%;
@@ -1611,6 +1986,20 @@ a:focus-visible, button:focus-visible {
 
 /* Extra Small Mobile Devices */
 @media (max-width: 480px) {
+    .gallery-card {
+        flex: 0 0 82%; /* ~1.2 cards visible on very small screens */
+    }
+
+    .lightbox-content {
+        width: 100%;
+        height: 82vh;
+    }
+
+    .lightbox-close {
+        top: -0.5rem;
+        right: 0;
+    }
+
     .hero-title {
         font-size: 1.3rem !important;
     }
