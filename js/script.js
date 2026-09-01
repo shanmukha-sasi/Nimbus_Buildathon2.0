@@ -34,6 +34,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Initialize Scroll Spy to highlight active section links
     initScrollSpy();
+
+    // Initialize Gallery horizontal scroll controls
+    initGallery();
 });
 
 
@@ -70,7 +73,7 @@ function initMobileNav() {
 // 4. SMOOTH SCROLLING WITH OFFSET CORRECTION
 // ==========================================================================
 function initSmoothScroll() {
-    const scrollLinks = document.querySelectorAll('a[href^="#"]:not(#open-form-btn), #hero-cta-btn');
+    const scrollLinks = document.querySelectorAll('a[href^="#"]:not(#open-form-btn):not(.gallery-card):not(.lightbox-close):not(.lightbox-backdrop), #hero-cta-btn');
 
     scrollLinks.forEach(link => {
         link.addEventListener("click", function(e) {
@@ -78,7 +81,10 @@ function initSmoothScroll() {
 
             // Extract the anchor target
             let targetId = this.getAttribute("href");
-            if (!targetId || targetId === "#") return;
+            if (!targetId || targetId === "#") {
+                window.scrollTo({ top: 0, behavior: "smooth" });
+                return;
+            }
 
             const targetElement = document.querySelector(targetId);
             if (!targetElement) return;
@@ -174,7 +180,7 @@ function initScrollSpy() {
 function initScrollAnimations() {
     // Add '.reveal' class to sections and elements we want to animate
     const animElements = document.querySelectorAll(
-        "section, .info-card, .benefit-card, .prize-card, .sponsor-card, .registration-column"
+        "section, .info-card, .benefit-card, .prize-card, .sponsor-card, .registration-column, .gallery-card"
     );
 
     animElements.forEach(el => {
@@ -198,5 +204,109 @@ function initScrollAnimations() {
 
     animElements.forEach(el => {
         revealObserver.observe(el);
+    });
+}
+
+
+// ==========================================================================
+// 8. GALLERY HORIZONTAL SCROLL CONTROLLER
+// ==========================================================================
+function initGallery() {
+    const track = document.querySelector(".gallery-track");
+    const leftBtn = document.querySelector(".gallery-arrow-left");
+    const rightBtn = document.querySelector(".gallery-arrow-right");
+
+    if (!track) return;
+
+    // --- Arrow button scroll ---
+    const getScrollAmount = () => {
+        const card = track.querySelector(".gallery-card");
+        if (!card) return 300;
+        const style = getComputedStyle(track);
+        const gap = parseFloat(style.gap) || 20;
+        return card.offsetWidth + gap;
+    };
+
+    const updateArrows = () => {
+        if (!leftBtn || !rightBtn) return;
+        const scrollLeft = Math.round(track.scrollLeft);
+        const maxScroll = track.scrollWidth - track.clientWidth;
+
+        leftBtn.disabled = scrollLeft <= 1;
+        rightBtn.disabled = scrollLeft >= maxScroll - 1;
+    };
+
+    if (leftBtn) {
+        leftBtn.addEventListener("click", () => {
+            track.scrollBy({ left: -getScrollAmount(), behavior: "smooth" });
+        });
+    }
+
+    if (rightBtn) {
+        rightBtn.addEventListener("click", () => {
+            track.scrollBy({ left: getScrollAmount(), behavior: "smooth" });
+        });
+    }
+
+    track.addEventListener("scroll", updateArrows, { passive: true });
+    window.addEventListener("resize", updateArrows);
+
+    // Initial state
+    updateArrows();
+
+    // --- Mouse drag scrolling for desktop ---
+    let isDragging = false;
+    let startX = 0;
+    let scrollStart = 0;
+    let hasDragged = false;
+
+    track.addEventListener("mousedown", (e) => {
+        // Don't interfere with link clicks unless dragged
+        isDragging = true;
+        hasDragged = false;
+        startX = e.pageX - track.offsetLeft;
+        scrollStart = track.scrollLeft;
+        track.style.cursor = "grabbing";
+        track.style.scrollBehavior = "auto"; // disable smooth during drag
+    });
+
+    track.addEventListener("mousemove", (e) => {
+        if (!isDragging) return;
+        e.preventDefault();
+        const x = e.pageX - track.offsetLeft;
+        const walk = (x - startX) * 1.2;
+        if (Math.abs(walk) > 5) hasDragged = true;
+        track.scrollLeft = scrollStart - walk;
+    });
+
+    const stopDrag = () => {
+        if (!isDragging) return;
+        isDragging = false;
+        track.style.cursor = "";
+        track.style.scrollBehavior = "smooth";
+    };
+
+    track.addEventListener("mouseup", stopDrag);
+    track.addEventListener("mouseleave", stopDrag);
+
+    // Prevent link navigation if user was dragging
+    track.querySelectorAll(".gallery-card").forEach(card => {
+        card.addEventListener("click", (e) => {
+            if (hasDragged) {
+                e.preventDefault();
+                hasDragged = false;
+            }
+        });
+    });
+
+    // --- Keyboard support for track focus ---
+    track.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowRight") {
+            e.preventDefault();
+            track.scrollBy({ left: getScrollAmount(), behavior: "smooth" });
+        } else if (e.key === "ArrowLeft") {
+            e.preventDefault();
+            track.scrollBy({ left: -getScrollAmount(), behavior: "smooth" });
+        }
     });
 }
