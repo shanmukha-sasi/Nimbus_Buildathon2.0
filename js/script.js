@@ -8,7 +8,7 @@
 // Centralized configuration variables for organizers to easily modify.
 const CONFIG = {
     // Replace this string with the actual Google Forms URL
-    googleFormUrl: "https://forms.gle/HRVb6rcbS1FZpeXb8",
+    googleFormUrl: "https://forms.gle/VmWbPUi9ceAjVa47A",
     
     // Smooth scrolling offset (matches the sticky navbar height in pixels)
     scrollOffset: 70
